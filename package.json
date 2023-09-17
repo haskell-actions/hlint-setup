@@ -1,5 +1,5 @@
 {
-  "name": "@rwe/actions-hlint-setup",
+  "name": "hlint-setup",
   "version": "1.0.1",
   "description": "GitHub Action: Set up hlint",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/haskell/actions.git"
+    "url": "git+https://github.com/haskell-actions/hlint-setup.git"
   },
   "keywords": [
     "Actions",
@@ -23,9 +23,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/haskell/actions/issues"
+    "url": "https://github.com/haskell-actions/hlint-setup/issues"
   },
-  "homepage": "https://github.com/haskell/actions#readme",
+  "homepage": "https://github.com/haskell-actions/hlint-setup#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/tool-cache": "^2.0.1"

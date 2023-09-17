@@ -1,14 +1,10 @@
-name: "/hlint-setup"
+name: "hlint-setup"
 on:
   pull_request:
   push:
     branches:
       - master
       - 'releases/*'
-
-defaults:
-  run:
-    working-directory: "hlint-setup"
 
 jobs:
   unit-tests:
@@ -19,7 +15,7 @@ jobs:
       with:
         node-version: "16"
         cache: "yarn"
-        cache-dependency-path: hlint-setup/yarn.lock
+        cache-dependency-path: .-setup/yarn.lock
     - run: yarn
     - run: yarn test
 
@@ -31,10 +27,9 @@ jobs:
       with:
         node-version: "16"
         cache: "yarn"
-        cache-dependency-path: hlint-setup/yarn.lock
+        cache-dependency-path: .-setup/yarn.lock
     - run: yarn
-      working-directory: "hlint-setup"
     - run: yarn compile
     - run: yarn package
-    - uses: ./hlint-setup
+    - uses: ./
     - run: hlint --version
