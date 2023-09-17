@@ -1,5 +1,5 @@
-name: 'Set up HLint'
-description: 'Cached download of hlint binary release'
+name: 'Install HLint to be used with hlint-run'
+description: 'Cached download of hlint binary release to be used with hlint-run'
 inputs:
   version:
     description: 'hlint version'
