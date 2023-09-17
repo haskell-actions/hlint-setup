@@ -23,18 +23,5 @@ jobs:
     - run: yarn compile
     - run: yarn package
     - run: yarn test
-
-  #test:
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #  - uses: actions/checkout@v4
-  #  - uses: actions/setup-node@v3
-  #    with:
-  #      node-version: "16"
-  #      cache: "yarn"
-  #      cache-dependency-path: .-setup/yarn.lock
-  #  - run: yarn
-  #  - run: yarn compile
-  #  - run: yarn package
-  #  - uses: ./
-  #  - run: hlint --version
+    - uses: ./
+    - run: hlint --version
