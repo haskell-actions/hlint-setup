@@ -6,7 +6,7 @@ Downloads a binary of HLint from [@ndmitchell/hlint](https://github.com/ndmitche
 caches it through [@actions/tool-cache](https://github.com/actions/tool-cache),
 and adds it into `PATH`.
 
-See also [haskell/actions/hlint-run](https://github.com/haskell/actions/tree/main/hlint-run), which will run `hlint` and represent its output in GitHub annotations.
+See also [haskell-actions/hlint-run](https://github.com/haskell-actions/hlint-run), which will run `hlint` and represent its output in GitHub annotations.
 
 ## Inputs
 
@@ -39,10 +39,10 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: 'Set up HLint'
-      uses: haskell/actions/hlint-setup@v2
+      uses: haskell-actions/hlint-setup@v2
 
     - name: 'Run HLint'
-      uses: haskell/actions/hlint-run@v2
+      uses: haskell-actions/hlint-run@v2
       with:
         path: src/
         fail-on: warning
