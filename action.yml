@@ -13,7 +13,7 @@ outputs:
   version:
     description: 'Version of the hlint tool (same as input, if provided)'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
 branding:
   icon: 'arrow-down-circle'
