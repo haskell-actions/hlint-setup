@@ -4,7 +4,7 @@ inputs:
   version:
     description: 'hlint version'
     required: false
-    default: '3.5'
+    default: '3.8'
 outputs:
   hlint-dir:
     description: 'Directory containing the hlint executable'
