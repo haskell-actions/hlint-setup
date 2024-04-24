@@ -2,9 +2,12 @@ import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as os from 'os'
 import * as path from 'path'
+import * as httpClient from '@actions/http-client'
 
 const TAR_ARCHIVE = {ext: 'tar.gz', extract: tc.extractTar};
 const ZIP_ARCHIVE = {ext: 'zip', extract: tc.extractZip};
+
+const HTTP_CLIENT = new httpClient.HttpClient('haskell-actions/hlint-setup');
 
 interface PlatformArchiveConfig {
   toolType: {pkgPlatform: string, ext: string},
@@ -45,7 +48,21 @@ interface HLintReleaseConfig {
   archive: ArchiveConfig,
 };
 
-function mkHlintReleaseConfig(nodeOsPlatform: string, nodeArch: string, hlintVersion: string): HLintReleaseConfig {
+async function getLatestHlintVersion(githubToken: string): Promise<string> {
+  const headers: { [key: string]: string } = {
+    Accept: 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+  };
+  if (githubToken) {
+    headers['Authorization'] = `Bearer ${githubToken}`;
+  }
+  const response = await HTTP_CLIENT.getJson(
+    'https://api.github.com/repos/ndmitchell/hlint/releases/latest',
+    headers);
+  return (response.result as { tag_name: string }).tag_name.replace(/^v/, '');
+}
+
+async function mkHlintReleaseConfig(nodeOsPlatform: string, nodeArch: string, requestedVersion: string, githubToken: string): Promise<HLintReleaseConfig> {
   const config = HLINT_PLATFORM_ARCHIVE_CONFIG[nodeOsPlatform];
   if (!config) {
     throw Error(`Invalid platform for hlint: ${nodeOsPlatform}`);
@@ -56,6 +73,11 @@ function mkHlintReleaseConfig(nodeOsPlatform: string, nodeArch: string, hlintVer
   }
 
   const {toolType: {pkgPlatform, ext: exeExt}, archiveType: {ext: archiveExt, extract}} = config;
+
+  let hlintVersion = requestedVersion;
+  if (hlintVersion === HLINT_DEFAULT_VERSION) {
+    hlintVersion = await getLatestHlintVersion(githubToken);
+  }
 
   const toolName = 'hlint';
   const releaseName = `${toolName}-${hlintVersion}`;
@@ -108,9 +130,10 @@ async function findOrDownloadHlint(hlintReleaseConfig: HLintReleaseConfig): Prom
   }
 }
 
-const HLINT_DEFAULT_VERSION = '3.1.6';
+const HLINT_DEFAULT_VERSION = 'latest';
 
 const INPUT_KEY_HLINT_VERSION = 'version';
+const INPUT_KEY_GITHUB_TOKEN = 'token';
 const OUTPUT_KEY_HLINT_DIR = 'hlint-dir';
 const OUTPUT_KEY_HLINT_PATH = 'hlint-bin';
 const OUTPUT_KEY_HLINT_VERSION = 'version';
@@ -118,7 +141,8 @@ const OUTPUT_KEY_HLINT_VERSION = 'version';
 async function run() {
   try {
     const hlintVersion = core.getInput(INPUT_KEY_HLINT_VERSION) || HLINT_DEFAULT_VERSION;
-    const config = mkHlintReleaseConfig(process.platform, os.arch(), hlintVersion);
+    const githubToken = core.getInput(INPUT_KEY_GITHUB_TOKEN);
+    const config = await mkHlintReleaseConfig(process.platform, os.arch(), hlintVersion, githubToken);
     const hlintDir = await findOrDownloadHlint(config);
     core.addPath(hlintDir);
     core.info(`hlint ${config.tool.version} is now set up at ${hlintDir}`);
